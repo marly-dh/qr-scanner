@@ -8,6 +8,7 @@ const auth = getAuth();
 
 const SignUpScreen = ({ navigation }) => {
   const [value, setValue] = React.useState({
+    displayName: '',
     email: '',
     password: '',
     error: ''
@@ -26,7 +27,7 @@ const SignUpScreen = ({ navigation }) => {
       createUserWithEmailAndPassword(auth, value.email, value.password)
         .then(() => {
           updateProfile(auth.currentUser, {
-            displayName: "NEW USER NAME",
+            displayName: value.displayName,
           });
         });
 
@@ -49,6 +50,17 @@ const SignUpScreen = ({ navigation }) => {
 
       <View style={styles.controls}>
         <Input
+          placeholder='Naam'
+          containerStyle={styles.control}
+          value={value.displayName}
+          onChangeText={(text) => setValue({ ...value, displayName: text })}
+          leftIcon={<Icon
+            name='user'
+            size={16}
+          />}
+        />
+
+        <Input
           placeholder='Email'
           containerStyle={styles.control}
           value={value.email}
@@ -60,7 +72,7 @@ const SignUpScreen = ({ navigation }) => {
         />
 
         <Input
-          placeholder='Password'
+          placeholder='Wachtwoord'
           containerStyle={styles.control}
           value={value.password}
           onChangeText={(text) => setValue({ ...value, password: text })}
@@ -90,7 +102,7 @@ const styles = StyleSheet.create({
 
   controls: {
     flex: 1,
-    width: '70%'
+    width: '80%'
   },
 
   control: {

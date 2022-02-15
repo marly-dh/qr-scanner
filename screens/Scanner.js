@@ -9,13 +9,14 @@ const auth = getAuth();
 function storeData(location, token) {
   const user = auth.currentUser;
   const db = getDatabase();
-  const userReference = ref(db, '/' + location + '/' + user.displayName);
+  const userReference = ref(db, '/' + location + '/15-02-2022/' + user.displayName);
   const tokenRefrence = ref(db, '/token');
 
   onValue(tokenRefrence, (snapshot) => {
     if (snapshot.val() === token) {
       set(userReference, {
-        time: "12:00",
+        checkIn: "09:07",
+        checkOut: "16:55",
         account: user.email
       });
     }
