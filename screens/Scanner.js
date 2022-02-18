@@ -1,24 +1,40 @@
-import { getDatabase, ref, set, onValue} from 'firebase/database';
+import { getDatabase, ref, onValue} from 'firebase/database';
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { getAuth } from "firebase/auth";
+import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
 
 const auth = getAuth();
 
-function storeData(location, token) {
+async function storeData(location, token) {
   const user = auth.currentUser;
+  const d = new Date();
+  const date = d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear();
   const db = getDatabase();
-  const userReference = ref(db, '/' + location + '/15-02-2022/' + user.displayName);
+  const fs = getFirestore();
+  const fsReference = doc(fs, 'registraties', date);
   const tokenRefrence = ref(db, '/token');
+  const userSnap = await getDoc(fsReference);
 
   onValue(tokenRefrence, (snapshot) => {
     if (snapshot.val() === token) {
-      set(userReference, {
-        checkIn: "09:07",
-        checkOut: "16:55",
-        account: user.email
-      });
+
+      if (userSnap.exists() && userSnap.data()[user.displayName] !== undefined) {
+        updateDoc(fsReference, {
+          [user.displayName + '.checkOut']: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})
+        })
+      } else {
+        setDoc(fsReference, {
+          [user.displayName]: {
+            checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+            checkOut: "",
+            account: user.email,
+            location: location
+          }
+        });
+      }
+
     }
   }, (errorObject) => {
     console.log('The read failed: ' + errorObject.name);
@@ -55,7 +71,7 @@ const ScannerScreen = () => {
       <View style={styles.cameraContainer}>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={[StyleSheet.absoluteFillObject, styles.camera]}
+          style={StyleSheet.absoluteFillObject}
         />
         {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
       </View>
