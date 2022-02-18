@@ -3,20 +3,25 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
+import firebase from "firebase/compat";
+import { getFirestore, doc, setDoc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
 
-const auth = getAuth();
-const d = new Date();
 
-const ScannerScreen = () => {
+const ScannerScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
+  const auth = getAuth();
+  const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
+  console.log(refresh);
 
 
   const checkOut = (ref, user) => {
     updateDoc(ref, {
       [user.displayName + '.checkOut']: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})
-    })
+    });
+    setRefresh(true);
   };
 
 
@@ -29,6 +34,7 @@ const ScannerScreen = () => {
         location: location
       }
     });
+    setRefresh(true);
   };
 
 
