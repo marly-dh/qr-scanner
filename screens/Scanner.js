@@ -13,8 +13,9 @@ const ScannerScreen = ({ navigation }) => {
   const [refresh, setRefresh] = useState(false);
 
   const auth = getAuth();
-  const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
-  console.log(refresh);
+  let d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
+
+  const newTimeStamp = () => d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
 
 
   const checkOut = (ref, user) => {
@@ -34,7 +35,7 @@ const ScannerScreen = ({ navigation }) => {
         location: location
       }
     });
-    setRefresh(true);
+    newTimeStamp();
   };
 
 
