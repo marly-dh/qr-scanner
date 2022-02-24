@@ -33,7 +33,6 @@ const ScannerScreen = () => {
         location: location
       }
     });
-    newTimeStamp();
   };
 
 
