@@ -4,17 +4,16 @@ import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { getAuth } from "firebase/auth";
 import firebase from "firebase/compat";
-import { getFirestore, doc, setDoc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
+import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
 
 
-const ScannerScreen = ({ navigation }) => {
+const ScannerScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   const auth = getAuth();
   const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
-  console.log(refresh);
 
 
   const checkOut = (ref, user) => {

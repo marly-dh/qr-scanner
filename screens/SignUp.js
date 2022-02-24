@@ -31,9 +31,6 @@ const SignUpScreen = ({ navigation }) => {
           });
         });
 
-      /*console.log(auth.currentUser.email);
-      console.log(auth.currentUser.displayName);*/
-
       navigation.navigate('Sign In');
     } catch (error) {
       setValue({
