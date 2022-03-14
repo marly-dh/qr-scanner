@@ -5,16 +5,18 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { getAuth } from "firebase/auth";
 import firebase from "firebase/compat";
 import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
+import * as Location from 'expo-location';
 
 
 const ScannerScreen = () => {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [location, setLocation] = useState(null);
 
   const auth = getAuth();
   const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
-
 
   const checkOut = (ref, user) => {
     updateDoc(ref, {
@@ -24,15 +26,40 @@ const ScannerScreen = () => {
   };
 
 
-  const checkIn = (ref, location, user) => {
-    setDoc(ref, {
+  const checkIn = (ref, locationQR, user) => {
+    console.log('started')
+
+    /*setDoc(ref, {
       [user.displayName]: {
         checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
         checkOut: "",
         account: user.email,
-        location: location
+        location: locationQR
       }
+    });*/
+
+    fetch('https://2do4school.nl/api/registrations', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user: {
+          id: 100,
+          email: user.email,
+          password: user.password
+        },
+        startTime: d,
+        endTime: '',
+        location: {
+          lat: location.coords.latitude,
+          longitude: location.coords.longitude
+        }
+      })
     });
+
+    console.log('succes')
   };
 
 
@@ -67,10 +94,23 @@ const ScannerScreen = () => {
   };
 
 
+  // request camera permission
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
+      setHasCameraPermission(status === 'granted');
+    })();
+  }, []);
+
+
+  // request location permission
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      setHasLocationPermission(status === 'granted');
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
     })();
   }, []);
 
@@ -82,11 +122,17 @@ const ScannerScreen = () => {
   };
 
 
-  if (hasPermission === null) {
+  if (hasCameraPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
-  if (hasPermission === false) {
+  if (hasCameraPermission === false) {
     return <Text>No access to camera</Text>;
+  }
+  if (hasLocationPermission === null) {
+    return <Text>Requesting for location permission</Text>;
+  }
+  if (hasLocationPermission === false) {
+    return <Text>No access to location</Text>;
   }
 
 
