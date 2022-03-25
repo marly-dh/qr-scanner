@@ -8,6 +8,9 @@ import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore
 import * as Location from 'expo-location';
 
 
+
+
+
 const ScannerScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
@@ -15,20 +18,18 @@ const ScannerScreen = () => {
   const [refresh, setRefresh] = useState(false);
   const [location, setLocation] = useState(null);
 
-  const auth = getAuth();
-  const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
+  //const auth = getAuth();
+  //const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
 
   const checkOut = (ref, user) => {
-    updateDoc(ref, {
+    /*updateDoc(ref, {
       [user.displayName + '.checkOut']: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})
-    });
+    });*/
     setRefresh(true);
   };
 
 
   const checkIn = (ref, locationQR, user) => {
-    console.log('started')
-
     /*setDoc(ref, {
       [user.displayName]: {
         checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
@@ -37,34 +38,11 @@ const ScannerScreen = () => {
         location: locationQR
       }
     });*/
-
-    fetch('https://2do4school.nl/api/registrations', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user: {
-          id: 100,
-          email: user.email,
-          password: user.password
-        },
-        startTime: d,
-        endTime: '',
-        location: {
-          lat: location.coords.latitude,
-          longitude: location.coords.longitude
-        }
-      })
-    });
-
-    console.log('succes')
   };
 
 
   const alertHandler = async (data) => {
-    const user = auth.currentUser;
+    /*const user = auth.currentUser;
     const date = d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear();
     const db = getDatabase();
     const fs = getFirestore();
@@ -90,7 +68,7 @@ const ScannerScreen = () => {
       } else {
         alert("Incorrecte QR code!")
       }
-    });
+    });*/
   };
 
 

@@ -4,9 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Input} from 'react-native-elements';
 import {createUserWithEmailAndPassword, getAuth, updateProfile} from 'firebase/auth';
 
-const auth = getAuth();
+//const auth = getAuth();
 
 const SignUpScreen = ({ navigation }) => {
+
   const [value, setValue] = React.useState({
     displayName: '',
     email: '',
@@ -24,12 +25,15 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     try {
-      createUserWithEmailAndPassword(auth, value.email, value.password)
+
+
+      auth.signUp(value.email, value.password)
+      /*createUserWithEmailAndPassword(auth, value.email, value.password)
         .then(() => {
           updateProfile(auth.currentUser, {
             displayName: value.displayName,
           });
-        });
+        });*/
 
       navigation.navigate('Sign In');
     } catch (error) {

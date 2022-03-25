@@ -1,12 +1,25 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Input, Button } from 'react-native-elements';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {Button, Input} from 'react-native-elements';
 
-const auth = getAuth();
+//const auth = getAuth();
 
-const SignInScreen = () => {
+
+const SignInScreen = ({navigation}) => {
+  fetch('http://127.0.0.1:8000/remoteLogin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: JSON.stringify({
+      email: "marlydehaard@gmail.com",
+      password: "12345678"
+    })
+  }).then(response => response.json())
+    .then(data => console.log(data));
+
+
   const [value, setValue] = React.useState({
     email: '',
     password: '',
@@ -23,12 +36,29 @@ const SignInScreen = () => {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, value.email, value.password);
+      // await signInWithEmailAndPassword(auth, value.email, value.password);
+      await fetch('http://127.0.0.1:8000/remoteLogin', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: value.email,
+          password: value.password
+        })
+      }).then(response => response.json())
+        .then(data => console.log(data));
+
+      /*setValue({
+        ...value,
+        error: result
+      })*/
     } catch (error) {
-      setValue({
+      console.log(error)
+      /*setValue({
         ...value,
         error: error.message,
-      })
+      })*/
     }
   }
 
@@ -42,7 +72,7 @@ const SignInScreen = () => {
           placeholder='Email'
           containerStyle={styles.control}
           value={value.email}
-          onChangeText={(text) => setValue({ ...value, email: text })}
+          onChangeText={(text) => setValue({...value, email: text})}
           leftIcon={<Icon
             name='envelope'
             size={16}
@@ -53,7 +83,7 @@ const SignInScreen = () => {
           placeholder='Password'
           containerStyle={styles.control}
           value={value.password}
-          onChangeText={(text) => setValue({ ...value, password: text })}
+          onChangeText={(text) => setValue({...value, password: text})}
           secureTextEntry={true}
           leftIcon={<Icon
             name='key'
@@ -61,7 +91,7 @@ const SignInScreen = () => {
           />}
         />
 
-        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn} />
+        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn}/>
       </View>
     </View>
   );
