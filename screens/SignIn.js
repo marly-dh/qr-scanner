@@ -3,23 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Input} from 'react-native-elements';
 
-//const auth = getAuth();
-
 
 const SignInScreen = ({navigation}) => {
-  fetch('http://127.0.0.1:8000/remoteLogin', {
-    method: 'POST',
-    headers: {
-      'Content-Type': "application/json"
-    },
-    body: JSON.stringify({
-      email: "marlydehaard@gmail.com",
-      password: "12345678"
-    })
-  }).then(response => response.json())
-    .then(data => console.log(data));
-
-
   const [value, setValue] = React.useState({
     email: '',
     password: '',
@@ -36,29 +21,31 @@ const SignInScreen = ({navigation}) => {
     }
 
     try {
-      // await signInWithEmailAndPassword(auth, value.email, value.password);
-      await fetch('http://127.0.0.1:8000/remoteLogin', {
+      fetch('http://127.0.0.1:8000/remoteLogin', {
         method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           email: value.email,
           password: value.password
         })
-      }).then(response => response.json())
-        .then(data => console.log(data));
+      }).then(response => {
+          response.json()
+        })
+        .then(data => {
+          ;
+        })
+      // await signInWithEmailAndPassword(auth, value.email, value.password);
 
       /*setValue({
         ...value,
         error: result
       })*/
-    } catch (error) {
-      console.log(error)
-      /*setValue({
+    } catch (error) {setValue({
         ...value,
         error: error.message,
-      })*/
+      })
     }
   }
 

@@ -3,7 +3,7 @@ import { ThemeProvider } from 'react-native-elements';
 import './config/firebase';
 import RootNavigation from './navigation';
 
-// To see all the requests in the chrome Dev tools in the network tab.
+/*// To see all the requests in the chrome Dev tools in the network tab.
 XMLHttpRequest = GLOBAL.originalXMLHttpRequest ?
   GLOBAL.originalXMLHttpRequest :
   GLOBAL.XMLHttpRequest;
@@ -15,7 +15,7 @@ global.fetch = function (uri, options, ...args) {
     console.log('Fetch', { request: { uri, options, ...args }, response });
     return response;
   });
-};
+};*/
 
 export default function App() {
   return (
