@@ -2,9 +2,12 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Input} from 'react-native-elements';
+import {useAuth} from '../contexts/Auth';
 
 
 const SignInScreen = ({navigation}) => {
+  const auth = useAuth();
+
   const [value, setValue] = React.useState({
     email: '',
     password: '',
@@ -21,21 +24,6 @@ const SignInScreen = ({navigation}) => {
     }
 
     try {
-      fetch('http://127.0.0.1:8000/remoteLogin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: value.email,
-          password: value.password
-        })
-      }).then(response => {
-          response.json()
-        })
-        .then(data => {
-          ;
-        })
       // await signInWithEmailAndPassword(auth, value.email, value.password);
 
       /*setValue({
@@ -78,7 +66,7 @@ const SignInScreen = ({navigation}) => {
           />}
         />
 
-        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn}/>
+        <Button title="Sign in" buttonStyle={styles.control} onPress={auth.signIn}/>
       </View>
     </View>
   );

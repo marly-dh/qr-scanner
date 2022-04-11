@@ -2,7 +2,7 @@ import { getDatabase, ref, onValue} from 'firebase/database';
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { getAuth } from "firebase/auth";
+//import { getAuth } from "firebase/auth";
 import firebase from "firebase/compat";
 import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
 import * as Location from 'expo-location';

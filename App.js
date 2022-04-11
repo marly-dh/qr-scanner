@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider } from 'react-native-elements';
+import {AuthProvider} from './contexts/Auth';
 import './config/firebase';
 import RootNavigation from './navigation';
 
@@ -19,9 +19,9 @@ global.fetch = function (uri, options, ...args) {
 
 export default function App() {
   return (
-    <ThemeProvider>
+    <AuthProvider>
       <RootNavigation />
-    </ThemeProvider>
+    </AuthProvider>
   );
 }
 
