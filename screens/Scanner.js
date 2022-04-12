@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import * as Location from 'expo-location';
-import {useAuth} from "../contexts/Auth";
+import { useAuth } from '../contexts/Auth';
+import { srvTime } from '../services/getServerTime';
 
 
 const ScannerScreen = () => {
@@ -13,6 +14,10 @@ const ScannerScreen = () => {
   const [location, setLocation] = useState(null);
 
   const auth = useAuth();
+  const user = auth.authData.user;
+  const date = srvTime();
+
+  console.log(location);
 
 
   const checkOut = (ref, user) => {
@@ -23,7 +28,7 @@ const ScannerScreen = () => {
   };
 
 
-  const checkIn = (locationQR, user) => {
+  const checkIn = async () => {
     /*setDoc(ref, {
       [user.displayName]: {
         checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
@@ -32,6 +37,18 @@ const ScannerScreen = () => {
         location: locationQR
       }
     });*/
+
+    await fetch('http://127.0.0.1:8000/api/registrations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user: '/api/users/'+user.id,
+        startTime: date,
+        location: location
+      })
+    })
   };
 
 
@@ -115,7 +132,7 @@ const ScannerScreen = () => {
         {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)} />}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()} />
+        <Button title="log uit" style={styles.button} onPress={() => checkIn()} />
       </View>
     </View>
   );
