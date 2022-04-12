@@ -1,9 +1,6 @@
 const signIn = async (email, password) => {
-  // this is a mock of an API call, in a real app
-  // will be need connect with some real API,
-  // send email and password, and if credential is corret
-  //the API will resolve with some token and another datas as the below
 
+  // make POST request with the given email and password
   const response = await fetch('http://127.0.0.1:8000/remoteLogin', {
     method: 'POST',
     headers: {
@@ -15,6 +12,7 @@ const signIn = async (email, password) => {
     })
   });
 
+  // return the promise with the response data (with correct input from the user it will return user data otherwise an error with what went wrong)
   return new Promise(resolve => {
     resolve(response.json())
   });

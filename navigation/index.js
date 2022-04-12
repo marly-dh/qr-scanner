@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuthentication } from '../hooks/useAuthentication';
 import UserStack from './userStack';
 import AuthStack from './authStack';
 import {Text} from "react-native";
@@ -9,11 +8,11 @@ import {NavigationContainer} from "@react-navigation/native";
 export default function RootNavigation() {
   const {authData, loading} = useAuth();
 
-  /*if (loading) {
-    //You can see the component implementation at the repository
-    return <Text>Loading....</Text>;
-  }*/
+  if (loading) {
+    return <Text>Loading....</Text>; // show loading while fetching data
+  }
 
+  // returns UserStack or AuthStack based on if you are logged in
   return (
     <NavigationContainer>
       {authData?.user ? <UserStack/> : <AuthStack/>}

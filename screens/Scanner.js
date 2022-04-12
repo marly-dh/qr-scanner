@@ -5,9 +5,6 @@ import * as Location from 'expo-location';
 import {useAuth} from "../contexts/Auth";
 
 
-
-
-
 const ScannerScreen = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
@@ -16,6 +13,7 @@ const ScannerScreen = () => {
   const [location, setLocation] = useState(null);
 
   const auth = useAuth();
+
 
   const checkOut = (ref, user) => {
     /*updateDoc(ref, {
@@ -117,7 +115,7 @@ const ScannerScreen = () => {
         {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)} />}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => auth.signOut} />
+        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()} />
       </View>
     </View>
   );

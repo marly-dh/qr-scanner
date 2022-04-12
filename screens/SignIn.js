@@ -5,32 +5,36 @@ import {Button, Input} from 'react-native-elements';
 import {useAuth} from '../contexts/Auth';
 
 
-const SignInScreen = ({navigation}) => {
-  const auth = useAuth();
+const SignInScreen = () => {
+  const auth = useAuth(); // this contains either user info or errors in user input that were returned by the api
 
+  // The email and password that the user has put in are stored here combined with any errors in user input that I caught myself
   const [value, setValue] = React.useState({
     email: '',
     password: '',
     error: ''
   });
 
+
   async function signIn() {
+    // check if email and password are empty
     if (value.email === '' || value.password === '') {
       setValue({
         ...value,
-        error: 'Email and password are mandatory.'
+        error: 'Email and password are mandatory.' // return this error message if either are empty
       });
       return;
+    } else {
+      setValue({
+        ...value,
+        error: ''
+      });
     }
 
     try {
-      // await signInWithEmailAndPassword(auth, value.email, value.password);
-
-      /*setValue({
-        ...value,
-        error: result
-      })*/
-    } catch (error) {setValue({
+      await auth.signIn(value.email, value.password); // see contexts/Auth.js for auth.signIn method
+    } catch (error) {
+      setValue({
         ...value,
         error: error.message,
       })
@@ -40,6 +44,8 @@ const SignInScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
 
+      {/* Shows errors if there are any */}
+      {(auth.authData && auth.authData.error) && <View style={styles.error}><Text>{auth.authData.error}</Text></View>}
       {!!value.error && <View style={styles.error}><Text>{value.error}</Text></View>}
 
       <View style={styles.controls}>
@@ -66,7 +72,7 @@ const SignInScreen = ({navigation}) => {
           />}
         />
 
-        <Button title="Sign in" buttonStyle={styles.control} onPress={auth.signIn}/>
+        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn}/>
       </View>
     </View>
   );
