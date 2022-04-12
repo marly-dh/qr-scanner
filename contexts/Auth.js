@@ -9,10 +9,10 @@ const AuthProvider = ({children}) => {
   //The loading part will be explained in the persist step session
   const [loading, setLoading] = useState(true);
 
-  const signIn = () => {
+  const signIn = async () => {
     //call the service passing credential (email and password).
     //In a real App this data will be provided by the user from some InputText components.
-    const _authData = authService.signIn(
+    const _authData = await authService.signIn(
       'marlydehaard@gmail.com',
       '12345678',
     );

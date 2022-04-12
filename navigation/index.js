@@ -4,6 +4,7 @@ import UserStack from './userStack';
 import AuthStack from './authStack';
 import {Text} from "react-native";
 import {useAuth} from "../contexts/Auth";
+import {NavigationContainer} from "@react-navigation/native";
 
 export default function RootNavigation() {
   const {authData, loading} = useAuth();
@@ -13,5 +14,9 @@ export default function RootNavigation() {
     return <Text>Loading....</Text>;
   }*/
 
-  return authData?.user ? <UserStack /> : <AuthStack />;
+  return (
+    <NavigationContainer>
+      {authData?.user ? <UserStack/> : <AuthStack/>}
+    </NavigationContainer>
+  );
 }

@@ -1,11 +1,8 @@
-import { getDatabase, ref, onValue} from 'firebase/database';
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-//import { getAuth } from "firebase/auth";
-import firebase from "firebase/compat";
-import { getFirestore, doc, setDoc, updateDoc, getDoc } from "firebase/firestore"
 import * as Location from 'expo-location';
+import {useAuth} from "../contexts/Auth";
 
 
 
@@ -18,8 +15,7 @@ const ScannerScreen = () => {
   const [refresh, setRefresh] = useState(false);
   const [location, setLocation] = useState(null);
 
-  //const auth = getAuth();
-  //const d = firebase.firestore.Timestamp.fromDate(new Date()).toDate();
+  const auth = useAuth();
 
   const checkOut = (ref, user) => {
     /*updateDoc(ref, {
@@ -29,7 +25,7 @@ const ScannerScreen = () => {
   };
 
 
-  const checkIn = (ref, locationQR, user) => {
+  const checkIn = (locationQR, user) => {
     /*setDoc(ref, {
       [user.displayName]: {
         checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
@@ -42,15 +38,12 @@ const ScannerScreen = () => {
 
 
   const alertHandler = async (data) => {
-    /*const user = auth.currentUser;
-    const date = d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear();
-    const db = getDatabase();
-    const fs = getFirestore();
-    const fsReference = doc(fs, 'registraties', date);
-    const tokenRefrence = ref(db, '/token');
-    const userSnap = await getDoc(fsReference);
+    Alert.alert('Check in', 'Weet je zeker dat je wilt inchecken?', [
+      { text: 'annuleer', onPress: () => {}, style: 'cancel' },
+      { text: 'ja', onPress: () => {checkIn(data.location)}}
+    ]);
 
-    onValue(tokenRefrence, (snapshot) => {
+    /*onValue(tokenRefrence, (snapshot) => {
       if (snapshot.val() === data.key) {
 
         if (userSnap.exists() && userSnap.data()[user.displayName] !== undefined) {
@@ -124,7 +117,7 @@ const ScannerScreen = () => {
         {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)} />}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => getAuth().signOut()} />
+        <Button title="log uit" style={styles.button} onPress={() => auth.signOut} />
       </View>
     </View>
   );

@@ -8,10 +8,8 @@ const Stack = createStackNavigator();
 
 export default function UserStack() {
   return (
-    <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Scanner" component={Scanner} />
       </Stack.Navigator>
-    </NavigationContainer>
   );
 }

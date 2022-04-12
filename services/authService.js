@@ -15,7 +15,9 @@ const signIn = async (email, password) => {
     })
   });
 
-  return await response.json();
+  return new Promise(resolve => {
+    resolve(response.json())
+  });
 };
 
 export const authService = {
