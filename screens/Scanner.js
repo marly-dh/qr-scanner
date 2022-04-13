@@ -4,6 +4,7 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import * as Location from 'expo-location';
 import { useAuth } from '../contexts/Auth';
 import { srvTime } from '../services/getServerTime';
+import { getLocationsByCoords } from "../services/locationService";
 
 
 const ScannerScreen = () => {
@@ -11,13 +12,11 @@ const ScannerScreen = () => {
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [location, setLocation] = useState(null);
+  const [myLocation, setLocation] = useState(null);
 
   const auth = useAuth();
   const user = auth.authData.user;
   const date = srvTime();
-
-  console.log(location);
 
 
   const checkOut = (ref, user) => {
@@ -27,8 +26,18 @@ const ScannerScreen = () => {
     setRefresh(true);
   };
 
+  const getLocations = async () => {
+    const locationsResponse = await fetch('https://2do4school.nl/api/locations?lat=52.046&longitude=4.514', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return locationsResponse.json();
+  }
 
-  const checkIn = async () => {
+
+  const checkIn = () => {
     /*setDoc(ref, {
       [user.displayName]: {
         checkIn: d.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
@@ -38,17 +47,24 @@ const ScannerScreen = () => {
       }
     });*/
 
-    await fetch('http://127.0.0.1:8000/api/registrations', {
+    getLocationsByCoords(myLocation.coords.latitude, 5).then(locations => {
+      if (locations.length > 0) {
+        console.log("filled")
+      } else {
+        console.log("empty")
+      }
+    });
+
+    /*await fetch('http://127.0.0.1:8000/api/registrations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         user: '/api/users/'+user.id,
-        startTime: date,
-        location: location
+        startTime: date
       })
-    })
+    })*/
   };
 
 
