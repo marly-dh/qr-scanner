@@ -6,7 +6,7 @@ import {useAuth} from "../contexts/Auth";
 import {NavigationContainer} from "@react-navigation/native";
 
 export default function RootNavigation() {
-  const {authData, loading} = useAuth();
+  const {authData, loading} = useAuth(); // i get the userData and the loading values from the Auth context (see contexts/Auth)
 
   if (loading) {
     return <Text>Loading....</Text>; // show loading while fetching data

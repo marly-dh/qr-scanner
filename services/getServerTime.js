@@ -20,7 +20,7 @@ function srvTime(){
       }
     }
   }
-  xmlHttp.open('HEAD',window.location.href.toString(),false);
+  xmlHttp.open('HEAD','https://2do4school.nl',false);
   xmlHttp.setRequestHeader("Content-Type", "text/html");
   xmlHttp.send('');
   const st = xmlHttp.getResponseHeader("Date");

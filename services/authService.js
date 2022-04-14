@@ -1,7 +1,7 @@
 const signIn = async (email, password) => {
 
   // make POST request with the given email and password
-  const response = await fetch('http://127.0.0.1:8000/remoteLogin', {
+  const response = await fetch('https://2do4school.nl/remoteLogin', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -12,7 +12,7 @@ const signIn = async (email, password) => {
     })
   });
 
-  // return the promise with the response data (with correct input from the user it will return user data otherwise an error with what went wrong)
+  // resolve the promise with the response data (with correct input from the user it will return user data otherwise an error with what went wrong)
   return new Promise(resolve => {
     resolve(response.json())
   });
