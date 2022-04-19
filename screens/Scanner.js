@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Alert } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import React, {useEffect, useState} from 'react';
+import {Alert, Button, StyleSheet, Text, View} from 'react-native';
+import {BarCodeScanner} from 'expo-barcode-scanner';
 import * as Location from 'expo-location';
-import { useAuth } from '../contexts/Auth';
-import { srvTime } from '../services/getServerTime';
-import { getLocationsByCoords } from "../services/locationService";
-import { postRegistration, getRegsByDate, patchRegEndTime } from "../services/registrationService";
+import {useAuth} from '../contexts/Auth';
+import {getLocationsByCoords, postLocation} from "../services/locationService";
+import {getRegsByDate, patchRegEndTime, postRegistration} from "../services/registrationService";
+import Static from "react-native-web/dist/modules/prefixStyles/static";
+import Status from "../components/Status";
 
 
 const ScannerScreen = () => {
@@ -16,6 +17,7 @@ const ScannerScreen = () => {
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
+  const ny = {lat: 40.689673591320556, long: -74.04581396036808};
   const auth = useAuth(); // with this variable we can acces variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
   //const date = srvTime();
@@ -29,46 +31,63 @@ const ScannerScreen = () => {
   };
 
   // this function will check if the user's location matches up to the ones in the database and then store a new registration with the given location
-  const checkIn = () => {
+  const checkIn = async () => {
     // fetches all locations similar to the location of the user (see services/locationService)
-    getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude).then(locations => {
-      // checks if there are any locations that match
-      if (locations.length > 0) {
-        // Posts the new registration to the API along with the user id, current date and time and the location of registration (see services/registrationService)
-        postRegistration(user.id, date, locations[0].id);
-        setRefresh(true); // refreshes component
-      } else {
-        alert("Uw locatie komt niet over een met een van onze locaties.")
-      }
+    let locations = await getLocationsByCoords(ny.lat, ny.long);
 
-    });
+    // if the given location does not show up on database
+    if (locations.length <= 0) {
+      // post a new location containing user's coords
+      await postLocation(ny.lat, ny.long);
+      locations = await getLocationsByCoords(ny.lat, ny.long); // fetch locations again to use the newly added location
+    }
+
+    // Posts the new registration to the API along with the user id, current date and time and the location of registration (see services/registrationService)
+    await postRegistration(user.id, date, locations[0].id);
+    setRefresh(true);
   };
 
 
   // this function will check if the user wants to check out or if the user was already registered today
   const alertHandler = async (data) => {
-    await getRegsByDate(formatDate(date), user.id).then(regs => {
+    const regs = await getRegsByDate(formatDate(date), user.id) // retrieves all registrations made by this user today
 
-      if (regs.length === 0){ // if the user registers for the first time today
-        //Asks if the user wants to check in
-        Alert.alert('Check in', 'Weet je zeker dat je wilt inchecken?', [
-          { text: 'annuleer', onPress: () => {}, style: 'cancel' },
-          { text: 'ja', onPress: () => {checkIn()}} // call the checkIn function
-        ]);
-      } else if (!regs[0].endTime) { // if the user has only checked in today (witch would mean he wants to check out)
-        //Asks if the user wants to check in
-        Alert.alert('Check uit', 'Weet je zeker dat je wilt uitchecken?', [
-          { text: 'annuleer', onPress: () => {}, style: 'cancel' },
-          { text: 'ja', onPress: () => {checkOut(regs[0].id)}} // call the checkout function along with the previous registration id
-        ]);
-      } else if (regs[0].endTime) {
-        // notifeis user that he is already registered for today
-        Alert.alert('Oeps..', 'U heeft zichzelf vandaag al geregistreerd.', [
-          { text: 'OK', onPress: () => {}, style: 'cancel' }
-        ]);
-      }
+    if (regs.length === 0) { // if the user registers for the first time today
+      //Asks if the user wants to check in
+      Alert.alert('Check in', 'Weet je zeker dat je wilt inchecken?', [
+        {
+          text: 'annuleer', onPress: () => {
+          }, style: 'cancel'
+        },
+        {
+          text: 'ja', onPress: () => {
+            checkIn()
+          }
+        } // call the checkIn function
+      ]);
+    } else if (!regs[0].endTime) { // if the user has only checked in today (witch would mean he wants to check out)
+      //Asks if the user wants to check in
+      Alert.alert('Check uit', 'Weet je zeker dat je wilt uitchecken?', [
+        {
+          text: 'annuleer', onPress: () => {
+          }, style: 'cancel'
+        },
+        {
+          text: 'ja', onPress: () => {
+            checkOut(regs[0].id)
+          }
+        } // call the checkout function along with the previous registration id
+      ]);
+    } else if (regs[0].endTime) {
+      // notifeis user that he is already registered for today
+      Alert.alert('Oeps..', 'U heeft zichzelf vandaag al geregistreerd.', [
+        {
+          text: 'OK', onPress: () => {
+          }, style: 'cancel'
+        }
+      ]);
+    }
 
-    });
   };
 
 
@@ -90,7 +109,7 @@ const ScannerScreen = () => {
   // request camera permission
   useEffect(() => {
     (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      const {status} = await BarCodeScanner.requestPermissionsAsync();
       setHasCameraPermission(status === 'granted');
     })();
   }, []);
@@ -99,7 +118,7 @@ const ScannerScreen = () => {
   // request location permission
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      let {status} = await Location.requestForegroundPermissionsAsync();
       setHasLocationPermission(status === 'granted');
 
       let location = await Location.getCurrentPositionAsync({});
@@ -109,7 +128,7 @@ const ScannerScreen = () => {
 
 
   // this function is called once the QR code has been scanned
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = ({type, data}) => {
     setScanned(true);
     let values = JSON.parse(data);
     alertHandler(values); // calls alertHandler along with QR code data
@@ -118,16 +137,16 @@ const ScannerScreen = () => {
 
   // shows status of permissions on screen
   if (hasCameraPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Status>Requesting for camera permission...</Status>;
   }
   if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Status>No access to camera...</Status>;
   }
   if (hasLocationPermission === null) {
-    return <Text>Requesting for location permission</Text>;
+    return <Status>Requesting for location permission...</Status>;
   }
   if (hasLocationPermission === false) {
-    return <Text>No access to location</Text>;
+    return <Status>No access to location...</Status>;
   }
 
 
@@ -138,10 +157,10 @@ const ScannerScreen = () => {
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
-        {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)} />}
+        {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)}/>}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()} />
+        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()}/>
       </View>
     </View>
   );

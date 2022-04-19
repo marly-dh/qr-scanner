@@ -1,9 +1,10 @@
 // This function fetches locations from the API that contain the given latitude and longitude
 const fetchLocations = async (lat, long) => {
-  const response = await fetch('https://2do4school.nl/api/locations?lat='+lat+'&longitude='+long, {
+  const response = await fetch('https://2do4school.nl/api/locations?page=1&lat='+lat+'&longitude='+long, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'accept': 'application/ld+json'
     }
   })
   return await response.json();
@@ -13,14 +14,41 @@ const fetchLocations = async (lat, long) => {
 // and resolves a promise containing locations similar to the given latitude nad longitude
 const getLocationsByCoords = (lat, long) => {
   // I shorten the decimal places of the values to make them less accurate (to take in account small deviations in GPS around the building)
-  lat = lat.toFixed(2);
-  long = long.toFixed(2);
+  lat = Math.trunc(lat*100)/100;
+  long = Math.trunc(long*100)/100;
 
   return new Promise(resolve => {
-    fetchLocations(lat, long).then(data => {
+    fetchLocations(lat.toString(), long.toString()).then(data => {
       resolve(data["hydra:member"]);
     });
   })
 }
 
-export {getLocationsByCoords};
+const getLocationDescription = async (lat, long) => {
+  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key=AIzaSyDvOUPil00f0AKSrn4MOIA4AYWkKtMhTgw', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  return response.json();
+}
+
+const postLocation = async (lat, long) => {
+  const description = await getLocationDescription(lat.toString(), long.toString());
+
+  const response = await fetch('https://2do4school.nl/api/locations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      description: description.results[0].formatted_address,
+      lat: lat.toString(),
+      longitude: long.toString()
+    })
+  })
+  return await response.json();
+}
+
+export {getLocationsByCoords, postLocation};
