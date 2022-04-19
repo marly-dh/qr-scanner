@@ -1,14 +1,3 @@
-// this function fetches the registrations based on date and userID and then returns the result
-const fetchRegistrations = async (date, userID) => {
-  const response = await fetch('https://2do4school.nl/api/registrations?user='+userID+'&startTime='+date, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-  return await response.json();
-}
-
 // this function stores a registration by posting to the API
 const postRegistration = async (userID, date, locationID, ) => {
   const response = await fetch('https://2do4school.nl/api/registrations', {
@@ -22,6 +11,17 @@ const postRegistration = async (userID, date, locationID, ) => {
       activity: '',
       location: '/api/locations/'+locationID
     })
+  });
+  return await response.json();
+}
+
+// this function fetches the registrations based on date and userID and then returns the result
+const fetchRegistrations = async (date, userID) => {
+  const response = await fetch('https://2do4school.nl/api/registrations?user='+userID+'&startTime='+date, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
   });
   return await response.json();
 }

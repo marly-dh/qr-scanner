@@ -12,9 +12,9 @@ const ScannerScreen = () => {
   // useStates to keep track of various pieces information from within the app
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasLocationPermission, setHasLocationPermission] = useState(null);
+  const [myLocation, setLocation] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [myLocation, setLocation] = useState(null);
 
   const auth = useAuth(); // with this variable we can acces variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
