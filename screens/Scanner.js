@@ -6,6 +6,7 @@ import {useAuth} from '../contexts/Auth';
 import {getLocationsByCoords, postLocation} from "../services/locationService";
 import {getRegsByDate, patchRegEndTime, postRegistration} from "../services/registrationService";
 import Status from "../components/Status";
+import {srvTime} from "../services/getServerTime";
 
 const ScannerScreen = () => {
   // useStates to keep track of various pieces information from within the app
@@ -15,19 +16,20 @@ const ScannerScreen = () => {
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  const auth = useAuth(); // with this variable we can acces variables nad functions from the Auth context (see contexts/Auth)
+  const auth = useAuth(); // with this variable we can access variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
-  const date = new Date(); // Get the current date and time
 
 
   // this function will add the endTime property to the registration that is given
   const checkOut = async (regID) => {
+    const date = await srvTime(); // fetch the current date and time
     patchRegEndTime(regID, date); // Here the API request is made (see services/registrationService)
     setRefresh(true); // refreshes component
   };
 
   // this function will check if the user's location matches up to the ones in the database and then store a new registration with the given location
   const checkIn = async () => {
+    const date = await srvTime(); // fetch the current date and time
     // fetches all locations similar to the location of the user (see services/locationService)
     let locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude);
 
@@ -46,6 +48,7 @@ const ScannerScreen = () => {
 
   // this function will check if the user wants to check out or if the user was already registered today
   const alertHandler = async (data) => {
+    const date = new Date(await srvTime()); // fetch the current date and time
     const regs = await getRegsByDate(formatDate(date), user.id) // retrieves all registrations made by this user today
 
     if (regs.length === 0) { // if the user registers for the first time today
