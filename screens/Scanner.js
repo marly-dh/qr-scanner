@@ -7,7 +7,10 @@ import {getLocationsByCoords, postLocation} from "../services/locationService";
 import {getRegsByDate, patchRegEndTime, postRegistration} from "../services/registrationService";
 import Static from "react-native-web/dist/modules/prefixStyles/static";
 import Status from "../components/Status";
+import getEnvVars from "../enviroment";
 
+
+const { googleApiKey } = getEnvVars();
 
 const ScannerScreen = () => {
   // useStates to keep track of various pieces information from within the app
@@ -16,6 +19,8 @@ const ScannerScreen = () => {
   const [myLocation, setLocation] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  console.log(googleApiKey);
 
   const ny = {lat: 40.689673591320556, long: -74.04581396036808};
   const auth = useAuth(); // with this variable we can acces variables nad functions from the Auth context (see contexts/Auth)
