@@ -1,3 +1,7 @@
+import getEnvVars from "../enviroment";
+
+const { googleApiKey } = getEnvVars();
+
 // This function fetches locations from the API that contain the given latitude and longitude
 const fetchLocations = async (lat, long) => {
   const response = await fetch('https://2do4school.nl/api/locations?page=1&lat='+lat+'&longitude='+long, {
@@ -25,7 +29,7 @@ const getLocationsByCoords = (lat, long) => {
 }
 
 const getLocationDescription = async (lat, long) => {
-  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key=', {
+  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key='+googleApiKey, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
