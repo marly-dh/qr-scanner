@@ -25,7 +25,7 @@ const getLocationsByCoords = (lat, long) => {
 }
 
 const getLocationDescription = async (lat, long) => {
-  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key=AIzaSyDvOUPil00f0AKSrn4MOIA4AYWkKtMhTgw', {
+  const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key=', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
