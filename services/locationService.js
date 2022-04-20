@@ -28,6 +28,7 @@ const getLocationsByCoords = (lat, long) => {
   })
 }
 
+// uses google maps api to fetch location details based on coordinates
 const getLocationDescription = async (lat, long) => {
   const response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+long+'&key='+googleApiKey, {
     method: 'GET',
@@ -38,7 +39,9 @@ const getLocationDescription = async (lat, long) => {
   return response.json();
 }
 
+// adds a new location to the database using the API
 const postLocation = async (lat, long) => {
+  // get description of location
   const description = await getLocationDescription(lat.toString(), long.toString());
 
   const response = await fetch('https://2do4school.nl/api/locations', {
