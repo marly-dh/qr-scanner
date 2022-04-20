@@ -5,7 +5,6 @@ import * as Location from 'expo-location';
 import {useAuth} from '../contexts/Auth';
 import {getLocationsByCoords, postLocation} from "../services/locationService";
 import {getRegsByDate, patchRegEndTime, postRegistration} from "../services/registrationService";
-import Static from "react-native-web/dist/modules/prefixStyles/static";
 import Status from "../components/Status";
 
 const ScannerScreen = () => {
