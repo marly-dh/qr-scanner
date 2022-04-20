@@ -21,8 +21,12 @@ const getLocationsByCoords = (lat, long) => {
   lat = Math.trunc(lat*100)/100;
   long = Math.trunc(long*100)/100;
 
+  // convert lat and long to string to prevent parsing errors
+  lat = lat.toString();
+  long = long.toString();
+
   return new Promise(resolve => {
-    fetchLocations(lat.toString(), long.toString()).then(data => {
+    fetchLocations(lat, long).then(data => {
       resolve(data["hydra:member"]);
     });
   })
@@ -41,8 +45,12 @@ const getLocationDescription = async (lat, long) => {
 
 // adds a new location to the database using the API
 const postLocation = async (lat, long) => {
+  // convert lat and long to string to prevent parsing errors
+  lat = lat.toString();
+  long = long.toString();
+
   // get description of location
-  const description = await getLocationDescription(lat.toString(), long.toString());
+  const description = await getLocationDescription(lat, long);
 
   const response = await fetch('https://2do4school.nl/api/locations', {
     method: 'POST',
@@ -51,8 +59,8 @@ const postLocation = async (lat, long) => {
     },
     body: JSON.stringify({
       description: description.results[0].formatted_address,
-      lat: lat.toString(),
-      longitude: long.toString()
+      lat: lat,
+      longitude: long
     })
   })
   return await response.json();

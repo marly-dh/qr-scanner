@@ -29,13 +29,13 @@ const ScannerScreen = () => {
   // this function will check if the user's location matches up to the ones in the database and then store a new registration with the given location
   const checkIn = async () => {
     // fetches all locations similar to the location of the user (see services/locationService)
-    let locations = await getLocationsByCoords(myLocation.coords.lat, myLocation.coords.long);
+    let locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude);
 
     // if the given location does not show up in database
     if (locations.length <= 0) {
       // post a new location containing user's coords
-      await postLocation(myLocation.coords.lat, myLocation.coords.long);
-      locations = await getLocationsByCoords(myLocation.coords.lat, myLocation.coords.long); // fetch locations again to use the newly added location
+      await postLocation(myLocation.coords.latitude, myLocation.coords.longitude);
+      locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude); // fetch locations again to use the newly added location
     }
 
     // Posts the new registration to the API along with the user id, current date and time and the location of registration (see services/registrationService)
