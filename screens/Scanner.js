@@ -136,16 +136,16 @@ const ScannerScreen = () => {
 
   // shows status of permissions on screen
   if (hasCameraPermission === null) {
-    return <Status>Requesting for camera permission...</Status>;
+    return <Status>Requesting for camera permission</Status>;
   }
   if (hasCameraPermission === false) {
-    return <Status>No access to camera...</Status>;
+    return <Status>No access to camera</Status>;
   }
   if (hasLocationPermission === null) {
-    return <Status>Requesting for location permission...</Status>;
+    return <Status>Requesting for location permission</Status>;
   }
   if (hasLocationPermission === false) {
-    return <Status>No access to location...</Status>;
+    return <Status>No access to location</Status>;
   }
 
 

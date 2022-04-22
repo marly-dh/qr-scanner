@@ -10,7 +10,7 @@ export default function RootNavigation() {
   const {authData, loading} = useAuth(); // i get the userData and the loading values from the Auth context (see contexts/Auth)
 
   if (loading) {
-    return <Status>Loading....</Status>; // show loading while fetching data
+    return <Status>Loading</Status>; // show loading while fetching data
   }
 
   // returns UserStack or AuthStack based on if you are logged in
