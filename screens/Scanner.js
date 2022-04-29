@@ -18,12 +18,13 @@ const ScannerScreen = () => {
 
   const auth = useAuth(); // with this variable we can access variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
+  const JWT = auth.authData.userToken.token
 
 
   // this function will add the endTime property to the registration that is given
   const checkOut = async (regID) => {
     const date = await srvTime(); // fetch the current date and time
-    patchRegEndTime(regID, date); // Here the API request is made (see services/registrationService)
+    patchRegEndTime(regID, date, JWT); // Here the API request is made (see services/registrationService)
     setRefresh(true); // refreshes component
   };
 
@@ -31,17 +32,17 @@ const ScannerScreen = () => {
   const checkIn = async () => {
     const date = await srvTime(); // fetch the current date and time
     // fetches all locations similar to the location of the user (see services/locationService)
-    let locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude);
+    let locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude, JWT);
 
     // if the given location does not show up in database
     if (locations.length <= 0) {
       // post a new location containing user's coords
-      await postLocation(myLocation.coords.latitude, myLocation.coords.longitude);
-      locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude); // fetch locations again to use the newly added location
+      await postLocation(myLocation.coords.latitude, myLocation.coords.longitude, JWT);
+      locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude, JWT); // fetch locations again to use the newly added location
     }
 
     // Posts the new registration to the API along with the user id, current date and time and the location of registration (see services/registrationService)
-    await postRegistration(user.id, date, locations[0].id);
+    await postRegistration(user.id, date, locations[0].id, JWT);
     setRefresh(true);
   };
 
@@ -49,7 +50,7 @@ const ScannerScreen = () => {
   // this function will check if the user wants to check out or if the user was already registered today
   const alertHandler = async (data) => {
     const date = new Date(await srvTime()); // fetch the current date and time
-    const regs = await getRegsByDate(formatDate(date), user.id) // retrieves all registrations made by this user today
+    const regs = await getRegsByDate(formatDate(date), user.id, JWT) // retrieves all registrations made by this user today
 
     if (regs.length === 0) { // if the user registers for the first time today
       //Asks if the user wants to check in
@@ -78,7 +79,7 @@ const ScannerScreen = () => {
         } // call the checkout function along with the previous registration id
       ]);
     } else if (regs[0].endTime) {
-      // notifeis user that he is already registered for today
+      // notifies user that he is already registered for today
       Alert.alert('Oeps..', 'U heeft zichzelf vandaag al geregistreerd.', [
         {
           text: 'OK', onPress: () => {

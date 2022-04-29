@@ -33,18 +33,23 @@ const AuthProvider = ({children}) => {
   }
 
   const signIn = async (email, password) => {
-    // API call is made in authService.signIn using the passed down credentials
-    const _authData = await authService.signIn(
+    const JWT = await authService.signIn(
       email,
       password,
     );
 
+    // API call is made in authService.signIn using the passed down credentials
+    const _authData = await authService.getUserData(
+      email,
+      JWT,
+    );
+
     // setting the authData with the user data will automatically notify the app and switch to the userStack (see navigation/index.js)
     // if the api returns an error. We will also use authData to transfer the error to the SignIn component
-    setAuthData(_authData);
+    setAuthData({userToken: JWT, user: _authData});
 
     // store data in async storage so that the user will automatically log in next time
-    AsyncStorage.setItem('@AuthData', JSON.stringify(_authData));
+    ////AsyncStorage.setItem('@AuthData', JSON.stringify({userToken: JWT, user: _authData}));
   };
 
   const signOut = async () => {
