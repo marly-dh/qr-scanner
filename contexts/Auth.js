@@ -46,10 +46,10 @@ const AuthProvider = ({children}) => {
 
     // setting the authData with the user data will automatically notify the app and switch to the userStack (see navigation/index.js)
     // if the api returns an error. We will also use authData to transfer the error to the SignIn component
-    setAuthData({userToken: JWT, user: _authData});
+    setAuthData({userToken: {token: "AA"}, user: _authData[0]});
 
     // store data in async storage so that the user will automatically log in next time
-    ////AsyncStorage.setItem('@AuthData', JSON.stringify({userToken: JWT, user: _authData}));
+    ////AsyncStorage.setItem('@AuthData', JSON.stringify({user: _authData[0]}));
   };
 
   const signOut = async () => {

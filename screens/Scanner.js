@@ -20,7 +20,6 @@ const ScannerScreen = () => {
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
   const JWT = auth.authData.userToken.token
 
-
   // this function will add the endTime property to the registration that is given
   const checkOut = async (regID) => {
     const date = await srvTime(); // fetch the current date and time
