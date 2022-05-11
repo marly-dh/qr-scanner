@@ -4,7 +4,7 @@ import {BarCodeScanner} from 'expo-barcode-scanner';
 import * as Location from 'expo-location';
 import {useAuth} from '../contexts/Auth';
 import {getLocationsByCoords, postLocation} from "../services/locationService";
-import {getRegsByDate, patchRegEndTime, postRegistration} from "../services/registrationService";
+import {getRegsByDate, patchRegEndTime, postRegistration, getQRToken} from "../services/registrationService";
 import Status from "../components/Status";
 import {srvTime} from "../services/getServerTime";
 
@@ -127,10 +127,21 @@ const ScannerScreen = () => {
 
 
   // this function is called once the QR code has been scanned
-  const handleBarCodeScanned = ({type, data}) => {
+  const handleBarCodeScanned = async ({data}) => {
     setScanned(true);
     let values = JSON.parse(data);
-    alertHandler(values); // calls alertHandler along with QR code data
+    let QRToken = await getQRToken();
+
+    if (QRToken.token === values.token) {
+      alertHandler(values); // calls alertHandler along with QR code data
+    } else {
+      Alert.alert('Oeps..', 'U niet een juiste QR code gescant.', [
+        {
+          text: 'OK', onPress: () => {
+          }, style: 'cancel'
+        }
+      ]);
+    }
   };
 
 
@@ -159,7 +170,7 @@ const ScannerScreen = () => {
         {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)}/>}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()}/>
+        <Button title="log uit" style={styles.button} onPress={() => handleBarCodeScanned({token: 'NcU2UAKW11BFTb5peECDz9l5T2ecKaRc'}) /*auth.signOut()*/}/>
       </View>
     </View>
   );

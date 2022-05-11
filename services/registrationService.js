@@ -52,4 +52,24 @@ const patchRegEndTime = async (id, date, JWT) => {
   return await response.json();
 }
 
-export {postRegistration, getRegsByDate, patchRegEndTime};
+const fetchQRToken = async (JWT) => {
+  const response = await fetch('https://2do4school.nl/api/qrtokens?page=1', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': JWT
+    }
+  });
+  return await response.json();
+}
+
+const getQRToken = (JWT) => {
+  return new Promise(resolve => {
+    fetchQRToken(JWT).then(data => {
+      console.log(data);
+      resolve(data["hydra:member"][0]);
+    })
+  })
+}
+
+export {postRegistration, getRegsByDate, patchRegEndTime, getQRToken};
