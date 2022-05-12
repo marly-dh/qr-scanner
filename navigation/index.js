@@ -13,8 +13,6 @@ export default function RootNavigation() {
     return <Status>Loading</Status>; // show loading while fetching data
   }
 
-  console.log(authData);
-
   // returns UserStack or AuthStack based on if you are logged in
   return (
     <NavigationContainer>

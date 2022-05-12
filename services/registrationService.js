@@ -66,7 +66,6 @@ const fetchQRToken = async (JWT) => {
 const getQRToken = (JWT) => {
   return new Promise(resolve => {
     fetchQRToken(JWT).then(data => {
-      console.log(data);
       resolve(data["hydra:member"][0]);
     })
   })

@@ -129,18 +129,32 @@ const ScannerScreen = () => {
   // this function is called once the QR code has been scanned
   const handleBarCodeScanned = async ({data}) => {
     setScanned(true);
-    let values = JSON.parse(data);
-    let QRToken = await getQRToken();
 
-    if (QRToken.token === values.token) {
-      alertHandler(values); // calls alertHandler along with QR code data
-    } else {
-      Alert.alert('Oeps..', 'U niet een juiste QR code gescant.', [
-        {
-          text: 'OK', onPress: () => {
-          }, style: 'cancel'
-        }
-      ]);
+    try {
+      let values = JSON.parse(data);
+      let QRToken = await getQRToken();
+
+      if (QRToken.token === values.token) {
+        alertHandler(values); // calls alertHandler along with QR code data
+      } else {
+        throw 'OLD';
+      }
+    } catch (e) {
+      if (e === 'OLD') {
+        Alert.alert('Oeps..', 'Deze QR code is verlopen, probeer opnieuw...', [
+          {
+            text: 'OK', onPress: () => {
+            }, style: 'cancel'
+          }
+        ]);
+      } else {
+        Alert.alert('Oeps..', 'U heeft niet een juiste QR code gescant.', [
+          {
+            text: 'OK', onPress: () => {
+            }, style: 'cancel'
+          }
+        ]);
+      }
     }
   };
 
