@@ -61,7 +61,7 @@ const SignInScreen = () => {
         />
 
         <Input
-          placeholder='Password'
+          placeholder='Wachtwoord'
           containerStyle={styles.control}
           value={value.password}
           onChangeText={(text) => setValue({...value, password: text})}
@@ -72,7 +72,7 @@ const SignInScreen = () => {
           />}
         />
 
-        <Button title="Sign in" buttonStyle={styles.control} onPress={signIn}/>
+        <Button title="Log In" buttonStyle={styles.control} onPress={signIn}/>
       </View>
     </View>
   );

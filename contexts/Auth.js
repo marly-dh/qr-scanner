@@ -1,6 +1,7 @@
 import React, {createContext, useState, useContext, useEffect} from 'react';
 import {authService} from '../services/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {srvTime} from "../services/getServerTime";
 
 const AuthContext = createContext({});
 
@@ -18,12 +19,20 @@ const AuthProvider = ({children}) => {
 
   async function loadStorageData() { // gets user data and logs in user (if user has logged in before)
     try {
-      // Try get the data from Async Storage
+      // Try to get the data from Async Storage
       const authDataSerialized = await AsyncStorage.getItem('@AuthData');
       if (authDataSerialized) {
-        // If there is data, it's converted to an Object and the state is updated (witch logs in user)
-        const _authData = JSON.parse(authDataSerialized);
-        setAuthData(_authData);
+        // If there is data, it's converted to an Object and the state is updated (witch logs in the user)
+        const asyncData = JSON.parse(authDataSerialized);
+        // calculate how long ago was the last time this user logged in
+        const difference = new Date(await srvTime()).getTime() - new Date(asyncData.date).getTime();
+
+        // if last login was more than 8 hours ago logout because then the JWT is expired
+        if (difference > 28800000) {
+          signOut();
+        } else {
+          setAuthData({token: asyncData.token, user: asyncData.user});
+        }
       }
     } catch (error) {
     } finally {
@@ -46,10 +55,10 @@ const AuthProvider = ({children}) => {
 
     // setting the authData with the user data will automatically notify the app and switch to the userStack (see navigation/index.js)
     // if the api returns an error. We will also use authData to transfer the error to the SignIn component
-    setAuthData({userToken: {token: "AA"}, user: _authData[0]});
+    setAuthData({token: JWT, user: _authData[0]});
 
     // store data in async storage so that the user will automatically log in next time
-    ////AsyncStorage.setItem('@AuthData', JSON.stringify({user: _authData[0]}));
+    AsyncStorage.setItem('@AuthData', JSON.stringify({user: _authData[0], token: JWT, date: await srvTime()}));
   };
 
   const signOut = async () => {

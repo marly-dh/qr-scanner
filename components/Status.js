@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Animated, Button, StyleSheet, Text, View} from "react-native";
 
-const Status = ({children}) => {
+const Status = ({children, loading}) => {
   let dot1 = useRef(new Animated.Value(0)).current;
   let dot2 = useRef(new Animated.Value(0)).current;
   let dot3 = useRef(new Animated.Value(0)).current;
@@ -41,9 +41,10 @@ const Status = ({children}) => {
     <View style={styles.container}>
       <View style={styles.statusContainer}>
         <Text style={styles.statusText}>{children}</Text>
-        <Animated.Text style={[styles.statusText, {opacity: dot1}]}>.</Animated.Text>
-        <Animated.Text style={[styles.statusText, {opacity: dot2}]}>.</Animated.Text>
-        <Animated.Text style={[styles.statusText, {opacity: dot3}]}>.</Animated.Text>
+        {loading && <Animated.Text style={[styles.statusText, {opacity: dot1}]}>.</Animated.Text>}
+        {loading && <Animated.Text style={[styles.statusText, {opacity: dot2}]}>.</Animated.Text>}
+        {loading && <Animated.Text style={[styles.statusText, {opacity: dot3}]}>.</Animated.Text>}
+
       </View>
     </View>
   );

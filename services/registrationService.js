@@ -52,6 +52,7 @@ const patchRegEndTime = async (id, date, JWT) => {
   return await response.json();
 }
 
+// this function fetches the QRToken from the database
 const fetchQRToken = async (JWT) => {
   const response = await fetch('https://2do4school.nl/api/qrtokens?page=1', {
     method: 'GET',
@@ -63,6 +64,7 @@ const fetchQRToken = async (JWT) => {
   return await response.json();
 }
 
+// this function initializes the fetch function and resolves a promise containing all the data
 const getQRToken = (JWT) => {
   return new Promise(resolve => {
     fetchQRToken(JWT).then(data => {

@@ -1,18 +1,15 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import WelcomeScreen from '../screens/Welcome';
 import SignInScreen from '../screens/SignIn';
-import SignOutScreen from '../screens/SignUp';
 
 const Stack = createStackNavigator();
 
 export default function AuthStack() {
+  // this navigator simply just refers to the SignIn screen
   return (
       <Stack.Navigator>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
-        <Stack.Screen name="Sign In" component={SignInScreen} />
-        <Stack.Screen name="Sign Up" component={SignOutScreen} />
+        <Stack.Screen name="Welkom" component={SignInScreen} />
       </Stack.Navigator>
   );
 }

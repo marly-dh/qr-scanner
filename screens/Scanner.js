@@ -18,7 +18,7 @@ const ScannerScreen = () => {
 
   const auth = useAuth(); // with this variable we can access variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
-  const JWT = auth.authData.userToken.token
+  const JWT = auth.authData.token
 
   // this function will add the endTime property to the registration that is given
   const checkOut = async (regID) => {
@@ -104,7 +104,6 @@ const ScannerScreen = () => {
     return num.toString().padStart(2, '0');
   }
 
-
   // request camera permission
   useEffect(() => {
     (async () => {
@@ -131,16 +130,17 @@ const ScannerScreen = () => {
     setScanned(true);
 
     try {
-      let values = JSON.parse(data);
-      let QRToken = await getQRToken();
+      let values = JSON.parse(data); // receive Token data from QR code
+      let QRToken = await getQRToken(); // fetch token from database
 
       if (QRToken.token === values.token) {
         alertHandler(values); // calls alertHandler along with QR code data
       } else {
-        throw 'OLD';
+        throw 'OLD'; // this means that the qr code token is expired
       }
     } catch (e) {
       if (e === 'OLD') {
+        // notifies user that token is expired
         Alert.alert('Oeps..', 'Deze QR code is verlopen, probeer opnieuw...', [
           {
             text: 'OK', onPress: () => {
@@ -148,6 +148,7 @@ const ScannerScreen = () => {
           }
         ]);
       } else {
+        // notifies user that the scanned QR code is not correct
         Alert.alert('Oeps..', 'U heeft niet een juiste QR code gescant.', [
           {
             text: 'OK', onPress: () => {
@@ -161,16 +162,16 @@ const ScannerScreen = () => {
 
   // shows status of permissions on screen
   if (hasCameraPermission === null) {
-    return <Status>Requesting for camera permission</Status>;
+    return <Status loading={true}>Toegang tot camera aanvragen</Status>;
   }
   if (hasCameraPermission === false) {
-    return <Status>No access to camera</Status>;
+    return <Status loading={false}>Geen toegang to camera</Status>;
   }
   if (hasLocationPermission === null) {
-    return <Status>Requesting for location permission</Status>;
+    return <Status loading={true}>Toegang tot locatie aanvragen</Status>;
   }
   if (hasLocationPermission === false) {
-    return <Status>No access to location</Status>;
+    return <Status loading={false}>Geen toegang tot locatie</Status>;
   }
 
 
@@ -184,7 +185,7 @@ const ScannerScreen = () => {
         {scanned && <Button title={'scan opnieuw'} onPress={() => setScanned(false)}/>}
       </View>
       <View style={styles.bottom}>
-        <Button title="log uit" style={styles.button} onPress={() => handleBarCodeScanned({token: 'NcU2UAKW11BFTb5peECDz9l5T2ecKaRc'}) /*auth.signOut()*/}/>
+        <Button title="log uit" style={styles.button} onPress={() => auth.signOut()}/>
       </View>
     </View>
   );
