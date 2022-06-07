@@ -18,7 +18,8 @@ const ScannerScreen = () => {
 
   const auth = useAuth(); // with this variable we can access variables nad functions from the Auth context (see contexts/Auth)
   const user = auth.authData.user; // separate the user data from the auth for cleaner code
-  const JWT = auth.authData.token
+  const JWT = auth.authData.token;
+
 
   // this function will add the endTime property to the registration that is given
   const checkOut = async (regID) => {
@@ -27,9 +28,11 @@ const ScannerScreen = () => {
     setRefresh(true); // refreshes component
   };
 
+
   // this function will check if the user's location matches up to the ones in the database and then store a new registration with the given location
   const checkIn = async () => {
     const date = await srvTime(); // fetch the current date and time
+
     // fetches all locations similar to the location of the user (see services/locationService)
     let locations = await getLocationsByCoords(myLocation.coords.latitude, myLocation.coords.longitude, JWT);
 
@@ -60,11 +63,12 @@ const ScannerScreen = () => {
         },
         {
           text: 'ja', onPress: () => {
-            checkIn()
+            checkIn() // call the checkIn function
           }
-        } // call the checkIn function
+        }
       ]);
-    } else if (!regs[0].endTime) { // if the user has only checked in today (witch would mean he wants to check out)
+    }
+    else if (!regs[0].endTime) { // if the user has only checked in today (witch would mean he wants to check out)
       //Asks if the user wants to check in
       Alert.alert('Check uit', 'Weet je zeker dat je wilt uitchecken?', [
         {
@@ -73,11 +77,12 @@ const ScannerScreen = () => {
         },
         {
           text: 'ja', onPress: () => {
-            checkOut(regs[0].id)
+            checkOut(regs[0].id) // call the checkout function along with the previous registration id
           }
-        } // call the checkout function along with the previous registration id
+        }
       ]);
-    } else if (regs[0].endTime) {
+    }
+    else if (regs[0].endTime) {
       // notifies user that he is already registered for today
       Alert.alert('Oeps..', 'U heeft zichzelf vandaag al geregistreerd.', [
         {
@@ -103,6 +108,7 @@ const ScannerScreen = () => {
   function padTo2Digits(num) {
     return num.toString().padStart(2, '0');
   }
+
 
   // request camera permission
   useEffect(() => {

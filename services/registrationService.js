@@ -1,5 +1,7 @@
 // this function stores a registration by posting to the API
 const postRegistration = async (userID, date, locationID, JWT) => {
+  date = date.toString();
+
   const response = await fetch('https://2do4school.nl/api/registrations', {
     method: 'POST',
     headers: {
@@ -39,6 +41,8 @@ const getRegsByDate = (date, userID, JWT) => {
 
 // this function adds the checkOut field to the registration with the given id using a PATCH call to the API
 const patchRegEndTime = async (id, date, JWT) => {
+  date = date.toString();
+
   const response = await fetch('https://2do4school.nl/api/registrations/'+id, {
     method: 'PATCH',
     headers: {
